@@ -484,6 +484,10 @@ const EMAIL = "karkiritesh11@gmail.com";
 
 const FORMSPREE_ENDPOINT = ""; // e.g. "https://formspree.io/f/abcdwxyz"
 const PROJECTS = [
+  {title:"Valuation Lab: Indian Equity Research Platform", tags:["Python","FastAPI","DCF","Reverse DCF","Sum-of-the-parts"],
+   desc:"A research site that takes an Indian company from exchange filings to a defended valuation, with every number explained and sourced.",
+   more:"Built from NSE filings and the company's own annual report. For Swiggy it values each segment separately and works backwards from the share price to what Instamart's margin must reach. Also: DCF and bank residual-income models, WACC, football field and an A4 report. Saved snapshot; assumptions fixed.",
+   glyph:"chart", url:"valuation-lab/"},
   {title:"Stock Closing Price Prediction using Deep Learning", tags:["TensorFlow","Keras","LSTM","Time-Series"],
    desc:"Built an LSTM model to forecast stock closing prices from historical time-series data, evaluated using MAE and RMSE.",
    more:"Collected historical OHLC price data and engineered features such as moving averages and lagged prices. Built a sequential LSTM network in TensorFlow/Keras, tuned the lookback window and hidden units, and validated on a held-out test period. Compared predicted vs. actual closing prices and reported MAE and RMSE as evaluation metrics.",
