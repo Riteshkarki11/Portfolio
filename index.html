@@ -223,7 +223,7 @@
     max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .3s ease, margin-top .35s ease;
     max-width:600px;
   }
-  .proj-more.open{max-height:220px; opacity:1; margin-top:14px;}
+  .proj-more.open{max-height:560px; opacity:1; margin-top:14px;}
   .proj-more p{color:var(--text-dim); font-size:14px; line-height:1.7;}
   .proj-link{display:inline-block; margin-top:10px; font-size:13.5px; color:var(--accent-2); border-bottom:1px solid rgba(155,130,255,.4);}
   .readmore{
@@ -382,6 +382,15 @@
   </div>
 </section>
 
+<!-- ================= WEBSITES ================= -->
+<section id="websites">
+  <div class="wrap">
+    <div class="eyebrow reveal">Live Sites</div>
+    <h2 class="section-title reveal">My Websites</h2>
+    <div id="websites-list"></div>
+  </div>
+</section>
+
 <!-- ================= WORK ================= -->
 <section id="work">
   <div class="wrap">
@@ -464,7 +473,7 @@
 <script>
 /* ---------------- data ---------------- */
 const NAV_LINKS = [
-  ["home","Home"],["about","About"],["work","Work"],
+  ["home","Home"],["about","About"],["websites","Websites"],["work","Work"],
   ["education","Education"],["experience","Experience"],["contact","Contact"]
 ];
 const TOOLS = [
@@ -484,10 +493,6 @@ const EMAIL = "karkiritesh11@gmail.com";
 
 const FORMSPREE_ENDPOINT = ""; // e.g. "https://formspree.io/f/abcdwxyz"
 const PROJECTS = [
-  {title:"Valuation Lab: Indian Equity Research Platform", tags:["Python","FastAPI","DCF","Reverse DCF","Sum-of-the-parts"],
-   desc:"A research site that takes an Indian company from exchange filings to a defended valuation, with every number explained and sourced.",
-   more:"Built from NSE filings and the company's own annual report. For Swiggy it values each segment separately and works backwards from the share price to what Instamart's margin must reach. Also: DCF and bank residual-income models, WACC, football field and an A4 report. Saved snapshot; assumptions fixed.",
-   glyph:"chart", url:"valuation-lab/"},
   {title:"Stock Closing Price Prediction using Deep Learning", tags:["TensorFlow","Keras","LSTM","Time-Series"],
    desc:"Built an LSTM model to forecast stock closing prices from historical time-series data, evaluated using MAE and RMSE.",
    more:"Collected historical OHLC price data and engineered features such as moving averages and lagged prices. Built a sequential LSTM network in TensorFlow/Keras, tuned the lookback window and hidden units, and validated on a held-out test period. Compared predicted vs. actual closing prices and reported MAE and RMSE as evaluation metrics.",
@@ -500,6 +505,14 @@ const PROJECTS = [
    desc:"Visualized real-world datasets to uncover trends and communicate actionable insights.",
    more:"Cleaned and explored raw datasets in pandas, then built a set of line, bar, scatter, and histogram charts in Matplotlib to surface trends, distributions, and correlations. Annotated and styled the charts for clarity and summarized the key takeaways for a non-technical audience.",
    glyph:"bars", url:""}
+];
+// The live site is hosted as its own Vercel project; set its address here.
+const VALUATION_LAB_URL = "https://valuation-lab-beige.vercel.app/";   // the live site, hosted as its own Vercel project
+const WEBSITES = [
+  {title:"Valuation Lab: Finance Research Platform for Indian Markets", tags:["Python","DCF","Reverse DCF","Equity Research","Finance Education"],
+   desc:"One site for finance students and analysts, built on real exchange data with every number explained and sourced. Equity research is live; more modules are on the way.",
+   more:"<strong>Live now: equity research for Nifty 500 companies.</strong> DCF and bank residual-income valuation, WACC, football field, a reverse DCF that shows what the share price implies, segment-wise sum-of-the-parts, business profiles that test management's story against the audited numbers (Swiggy first), and printable A4 reports. Every assumption can be changed and every figure shows its source.<br><br><strong>Coming next:</strong> portfolio and risk labs, fixed income, options and factor models, a wealth planner, private deals, and a learning module for CFA, FRM, CMA and MBA finance.",
+   glyph:"chart", url:VALUATION_LAB_URL}
 ];
 const EDUCATION = [
   {title:"MBA — Data Science & AI", place:"IIT Mandi", period:"2025 — Present"},
@@ -609,35 +622,38 @@ const glyphs = {
   filter: `<svg viewBox="0 0 100 70" width="100%" height="100%"><rect width="100" height="70" fill="#181227"/><circle cx="34" cy="30" r="16" fill="none" stroke="#9b82ff" stroke-width="2.5"/><path d="M46 42 L60 56" stroke="#9b82ff" stroke-width="2.5" stroke-linecap="round"/><path d="M68 20l10 10M78 20L68 30" stroke="#f0a860" stroke-width="2.5" stroke-linecap="round"/></svg>`,
   bars: `<svg viewBox="0 0 100 70" width="100%" height="100%"><rect width="100" height="70" fill="#151321"/><rect x="14" y="34" width="12" height="26" fill="#7c5cff"/><rect x="34" y="20" width="12" height="40" fill="#9b82ff"/><rect x="54" y="42" width="12" height="18" fill="#7c5cff"/><rect x="74" y="10" width="12" height="50" fill="#f0a860"/></svg>`
 };
-const projList = document.getElementById('projects');
-PROJECTS.forEach((p,idx)=>{
-  const row = document.createElement('div'); row.className='proj-row';
-  row.innerHTML = `
-    <div>
-      <div class="proj-title">${p.title}</div>
-      <div class="proj-tags">${p.tags.map(t=>`<span class="proj-tag">${t}</span>`).join('')}</div>
-      <div class="proj-desc">${p.desc}</div>
-      <div class="proj-more" id="proj-more-${idx}">
-        <p>${p.more}</p>
-        ${p.url ? `<a href="${p.url}" target="_blank" rel="noreferrer" class="proj-link">View project ↗</a>` : ''}
+function buildRows(list, host, pre, linkText){
+  list.forEach((p,idx)=>{
+    const row = document.createElement('div'); row.className='proj-row';
+    row.innerHTML = `
+      <div>
+        <div class="proj-title">${p.title}</div>
+        <div class="proj-tags">${p.tags.map(t=>`<span class="proj-tag">${t}</span>`).join('')}</div>
+        <div class="proj-desc">${p.desc}</div>
+        <div class="proj-more" id="${pre}-more-${idx}">
+          <p>${p.more}</p>
+          ${p.url ? `<a href="${p.url}" target="_blank" rel="noreferrer" class="proj-link">${linkText} ↗</a>` : ''}
+        </div>
       </div>
-    </div>
-    <button type="button" class="readmore" id="readmore-${idx}" aria-expanded="false">
-      <span class="rm-label">Read More</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="rm-arrow"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-    </button>`;
-  row.dataset.glyph = p.glyph;
-  projList.appendChild(row);
+      <button type="button" class="readmore" id="${pre}-rm-${idx}" aria-expanded="false">
+        <span class="rm-label">Read More</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="rm-arrow"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </button>`;
+    row.dataset.glyph = p.glyph;
+    host.appendChild(row);
 
-  const btn = row.querySelector(`#readmore-${idx}`);
-  const panel = row.querySelector(`#proj-more-${idx}`);
-  btn.addEventListener('click', ()=>{
-    const isOpen = panel.classList.toggle('open');
-    btn.classList.toggle('open', isOpen);
-    btn.setAttribute('aria-expanded', String(isOpen));
-    btn.querySelector('.rm-label').textContent = isOpen ? 'Show Less' : 'Read More';
+    const btn = row.querySelector(`#${pre}-rm-${idx}`);
+    const panel = row.querySelector(`#${pre}-more-${idx}`);
+    btn.addEventListener('click', ()=>{
+      const isOpen = panel.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.setAttribute('aria-expanded', String(isOpen));
+      btn.querySelector('.rm-label').textContent = isOpen ? 'Show Less' : 'Read More';
+    });
   });
-});
+}
+buildRows(PROJECTS, document.getElementById('projects'), 'proj', 'View project');
+buildRows(WEBSITES, document.getElementById('websites-list'), 'web', 'Open website');
 
 const preview = document.getElementById('proj-preview');
 document.querySelectorAll('.proj-row').forEach(row=>{
